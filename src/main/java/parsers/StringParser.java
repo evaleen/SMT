@@ -8,5 +8,7 @@ package parsers;
  * @since 29/03/2016
  */
 public class StringParser {
-
+    public static String addUrlSpacing(String line) {
+        return line.replaceAll(" ", "%20");
+    }
 }
