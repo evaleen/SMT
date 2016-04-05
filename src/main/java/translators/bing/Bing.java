@@ -1,7 +1,8 @@
-package translators.moses;
+package translators.bing;
 
 import evaluators.bleu.Bleu;
-import readers.api.MosesApiReader;
+import readers.api.BingApiReader;
+import readers.api.YandexApiReader;
 import readers.file.TextFileReader;
 import writers.TextFileWriter;
 
@@ -9,15 +10,15 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Runs evaluation for Moses
+ * Runs evaluation for Yandex
  *
  * @author Conor Hughes - hello@conorhughes.me
  * @version 1.0
  * @since 31/03/2016
  */
-public class Moses {
+public class Bing {
 
-    private MosesApiReader mosesApiReader;
+    private BingApiReader bingApiReader;
     private TextFileReader textFileReader;
     private TextFileWriter textFileWriter;
     private Bleu bleu;
@@ -29,8 +30,8 @@ public class Moses {
     private String file;
 
 
-    public Moses(TextFileReader textFileReader, TextFileWriter textFileWriter, Bleu bleu) {
-        mosesApiReader = new MosesApiReader();
+    public Bing(TextFileReader textFileReader, TextFileWriter textFileWriter, Bleu bleu) {
+        bingApiReader = new BingApiReader();
         this.textFileReader = textFileReader;
         this.textFileWriter = textFileWriter;
         this.bleu = bleu;
@@ -41,15 +42,16 @@ public class Moses {
         this.target = target;
         this.text = text;
         this.reference = reference;
-        this.file = "translations/moses_" + source + "_" + target + ".txt";
+        this.file = "translations/bing_" + source + "_" + target + ".txt";
     }
 
-    public void translate(int lines) throws IOException {
+    public void translate(int lines) throws Exception {
         textFileWriter.setWriter(file);
         for (int i = 0; i < lines; i++) {
             if(text.get(i).length() > 5) {
-                String translation = mosesApiReader.read(source, target, text.get(i));
+                String translation = bingApiReader.read(source, target, text.get(i));
                 textFileWriter.write(translation);
+                Thread.sleep(100);
             }
         }
         textFileWriter.close();
@@ -74,7 +76,7 @@ public class Moses {
     }
 
     public void print(double bleu, double nist, double meteor) {
-        System.out.println("____ MOSES ____");
+        System.out.println("____ BING ____");
         System.out.println();
         System.out.println("BLEU: " + bleu);
         System.out.println("NIST: " + nist);

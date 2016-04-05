@@ -9,10 +9,10 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
     compile(
-            'org.json:json:20151123'
+            'org.json:json:20151123',
+            'com.memetix:microsoft-translator-java-api:0.6.1'
     )
     testCompile('org.apache.lucene:lucene-test-framework:4.7.2',
             'junit:junit:4.11',

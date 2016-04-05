@@ -1,9 +1,8 @@
-package translators.Yandex;
+package translators.yandex;
 
 import evaluators.bleu.Bleu;
-import readers.MosesApiReader;
-import readers.TextFileReader;
-import readers.YandexApiReader;
+import readers.file.TextFileReader;
+import readers.api.YandexApiReader;
 import writers.TextFileWriter;
 
 import java.io.IOException;
