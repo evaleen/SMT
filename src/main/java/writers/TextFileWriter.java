@@ -10,12 +10,13 @@ import java.io.*;
  * @version 1.0
  * @since 29/03/2016
  */
-public class FileWriter {
+public class TextFileWriter {
 
     private Writer writer;
 
-    public FileWriter(String path) throws UnsupportedEncodingException, FileNotFoundException {
-        OutputStream outputStream = new FileOutputStream(path);
+    public void setWriter(String path) throws UnsupportedEncodingException, FileNotFoundException {
+        File file = new File(path);
+        OutputStream outputStream = new FileOutputStream(file);
         writer = new OutputStreamWriter(outputStream, "UTF-8");
     }
 
