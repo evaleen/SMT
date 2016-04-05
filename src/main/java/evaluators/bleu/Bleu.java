@@ -1,30 +1,21 @@
 package evaluators.bleu;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Bleu {
 
-    private List<String> ngrams(String[] words, int n) {
-        List<String> ngrams = new ArrayList<String>();
-        for (int i = 0; i <= words.length - n; i++) {
-            String gram = "";
-            for (int j = i; j < i + n; j++) {
-                gram += words[j] + " ";
-            }
-            gram = gram.substring(0, gram.length() - 1);
-            ngrams.add(gram);
-        }
-        return ngrams;
-    }
-
     public double getScore(String translation, String reference, int n) {
+        translation = translation.toLowerCase();
+        reference = reference.toLowerCase();
         String[] translationWords = translation.split(" ");
         String[] referenceWords = reference.split(" ");
+
+        if (translationWords.length < n) {
+            n = translationWords.length;
+        }
+
         double min = Math.min(1, (((double) translationWords.length) / referenceWords.length));
-        double score = 0;
+        double score = 1.0;
         for (int i = 1; i <= n; i++) {
             double correctNgram = 0;
             List<String> translationNgrams = ngrams(translationWords, i);
@@ -39,7 +30,20 @@ public class Bleu {
             double precision = correctNgram / totalNgramLength;
             score = score * precision;
         }
-        return min * (Math.pow(score, (1 / n)));
+        return min * (Math.pow(score, (1.0 / (double) n)));
+    }
+
+    private List<String> ngrams(String[] words, int n) {
+        List<String> ngrams = new ArrayList<String>();
+        for (int i = 0; i <= words.length - n; i++) {
+            String gram = "";
+            for (int j = i; j < i + n; j++) {
+                gram += words[j] + " ";
+            }
+            gram = gram.substring(0, gram.length() - 1);
+            ngrams.add(gram);
+        }
+        return ngrams;
     }
 
     private List<String> clipNgrams(List<String> translatedNGrams, String reference) {

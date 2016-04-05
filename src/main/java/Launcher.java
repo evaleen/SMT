@@ -1,7 +1,7 @@
 import evaluators.bleu.Bleu;
-import readers.File;
-import readers.Translator;
-import writers.FileWriter;
+import readers.TextFileReader;
+import translators.Moses;
+import writers.TextFileWriter;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,32 +15,25 @@ import java.util.List;
  */
 
 public class Launcher {
+
+    private static final String ENGLISH_CZECH_FILENAME = "en-cz.txt";
+    private static final String CZECH_ENGLISH_FILENAME = "cz-en.txt";
+
     public static void main(String[] args) {
+        TextFileReader textFileReader = new TextFileReader();
+        TextFileWriter textFileWriter = new TextFileWriter();
+        Bleu bleu = new Bleu();
+
         try {
-            List<String> en_cz_lines = readFile("en-cz.txt");
-            List<String> cz_en_lines = readFile("cz-en.txt");
+            List<String> english_czech_file = textFileReader.readResources(ENGLISH_CZECH_FILENAME);
+            List<String> czech_english_file = textFileReader.readResources(CZECH_ENGLISH_FILENAME);
 
-            Translator translator = new Translator();
-            FileWriter fileWriter = new FileWriter("test.txt");
-            Bleu bleu = new Bleu();
-
-            for (int i = 0; i < 10; i++) {
-                String translation = translator.readMoses("en", "cs", en_cz_lines.get(i));
-                double score = bleu.getScore(translation, cz_en_lines.get(i), 4);
-                System.out.println(translation);
-                System.out.println(cz_en_lines.get(i));
-                System.out.println(score);
-                System.out.println();
-                fileWriter.write(translation);
-            }
-            fileWriter.close();
-        } catch (Exception e) {
+            Moses moses = new Moses(textFileReader, textFileWriter, bleu);
+            moses.init("en", "cs", english_czech_file, czech_english_file);
+            //moses.translate(100);
+            moses.evaluate();
+        } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private static List<String> readFile(String file) throws IOException {
-        File fileReader = new File();
-        return fileReader.read(file);
     }
 }

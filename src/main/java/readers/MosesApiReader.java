@@ -17,9 +17,9 @@ import java.net.URL;
  * @version 1.0
  * @since 29/03/2016
  */
-public class Translator {
+public class MosesApiReader {
 
-    public String readMoses(String sourceLanguage, String targetLanguage, String text) throws IOException {
+    public String read(String sourceLanguage, String targetLanguage, String text) throws IOException {
         text = StringParser.addUrlSpacing(text);
         String url = "http://lindat.mff.cuni.cz/services/moses/request.php?action=translate&model=0&sourceLang=" + sourceLanguage + "&targetLang=" + targetLanguage + "&text=" + text;
         InputStream inputStream = new URL(url).openStream();
