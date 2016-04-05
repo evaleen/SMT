@@ -1,6 +1,7 @@
 import evaluators.bleu.Bleu;
 import readers.TextFileReader;
-import translators.Moses;
+import translators.Moses.Moses;
+import translators.Yandex.Yandex;
 import writers.TextFileWriter;
 
 import java.io.IOException;
@@ -30,8 +31,13 @@ public class Launcher {
 
             Moses moses = new Moses(textFileReader, textFileWriter, bleu);
             moses.init("en", "cs", english_czech_file, czech_english_file);
-            //moses.translate(100);
+//            moses.translate(100);
             moses.evaluate();
+
+            Yandex yandex = new Yandex(textFileReader, textFileWriter, bleu);
+            yandex.init("en", "cs", english_czech_file, czech_english_file);
+//            yandex.translate(100);
+            yandex.evaluate();
         } catch (IOException e) {
             e.printStackTrace();
         }
