@@ -32,7 +32,7 @@ public class Launcher {
 
             moses(textFileReader, textFileWriter, bleu, "en", "cs", english_czech_file, czech_english_file, false);
             yandex(textFileReader, textFileWriter, bleu, "en", "cs", english_czech_file, czech_english_file, false);
-            bing(textFileReader, textFileWriter, bleu, "en", "cs", english_czech_file, czech_english_file, true);
+            bing(textFileReader, textFileWriter, bleu, "en", "cs", english_czech_file, czech_english_file, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
