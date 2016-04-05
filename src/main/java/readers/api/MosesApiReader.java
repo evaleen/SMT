@@ -1,4 +1,4 @@
-package readers;
+package readers.api;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
