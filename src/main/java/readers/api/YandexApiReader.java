@@ -1,7 +1,7 @@
 package readers.api;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import parsers.StringParser;
 
 import java.io.BufferedReader;
@@ -29,8 +29,9 @@ public class YandexApiReader {
         while ((line = reader.readLine()) != null) {
             result.append(line);
         }
-        JSONObject jsonObject = new JSONObject(result.toString());
-        JSONArray jsonArray = jsonObject.getJSONArray("text");
-        return jsonArray.get(0).toString();
+
+        JsonParser parser = new JsonParser();
+        JsonElement element = parser.parse(result.toString());
+        return element.getAsJsonObject().get("text").getAsJsonArray().get(0).getAsString();
     }
 }

@@ -1,7 +1,7 @@
 package readers.api;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import parsers.StringParser;
 
 import java.io.BufferedReader;
@@ -29,11 +29,9 @@ public class MosesApiReader {
         while ((line = reader.readLine()) != null) {
             result.append(line);
         }
-        JSONObject jsonObject = new JSONObject(result.toString());
-        JSONArray jsonArray = jsonObject.getJSONArray("translation");
-        JSONObject translations = (JSONObject) jsonArray.get(0);
-        JSONArray translation = (JSONArray) translations.get("translated");
-        JSONObject translated = (JSONObject) translation.get(0);
-        return translated.get("text").toString();
+
+        JsonParser parser = new JsonParser();
+        JsonElement element = parser.parse(result.toString());
+        return element.getAsJsonObject().get("translation").getAsJsonArray().get(0).getAsJsonObject().get("translated").getAsJsonArray().get(0).getAsJsonObject().get("text").getAsString();
     }
 }

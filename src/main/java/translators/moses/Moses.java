@@ -1,6 +1,7 @@
 package translators.moses;
 
 import evaluators.bleu.Bleu;
+import evaluators.meteor.Meteor;
 import readers.api.MosesApiReader;
 import readers.file.TextFileReader;
 import writers.TextFileWriter;
@@ -21,19 +22,21 @@ public class Moses {
     private TextFileReader textFileReader;
     private TextFileWriter textFileWriter;
     private Bleu bleu;
+    private Meteor meteor;
 
+    private String file;
     private String source;
     private String target;
     private List<String> text;
     private List<String> reference;
-    private String file;
 
 
-    public Moses(TextFileReader textFileReader, TextFileWriter textFileWriter, Bleu bleu) {
-        mosesApiReader = new MosesApiReader();
+    public Moses(TextFileWriter textFileWriter, TextFileReader textFileReader, Bleu bleu, Meteor meteor) {
         this.textFileReader = textFileReader;
         this.textFileWriter = textFileWriter;
         this.bleu = bleu;
+        this.meteor = meteor;
+        this.mosesApiReader = new MosesApiReader();
     }
 
     public void init(String source, String target, List<String> text, List<String> reference) {
@@ -44,13 +47,16 @@ public class Moses {
         this.file = "translations/moses_" + source + "_" + target + ".txt";
     }
 
-    public void translate(int lines) throws IOException {
+    public void translate(int lines) throws Exception {
         textFileWriter.setWriter(file);
-        for (int i = 0; i < lines; i++) {
-            if(text.get(i).length() > 5) {
-                String translation = mosesApiReader.read(source, target, text.get(i));
-                textFileWriter.write(translation);
+        int read = 0;
+        int write = 0;
+        while(write <= lines) {
+            if (text.get(read).length() > 5) {
+                textFileWriter.write(mosesApiReader.read(source, target, text.get(read)));
+                write++;
             }
+            read++;
         }
         textFileWriter.close();
     }
@@ -58,27 +64,27 @@ public class Moses {
     public void evaluate() throws IOException {
         List<String> translations = textFileReader.read(file);
         double bleuScore = 0;
-        double nistScore = 0;
         double meteorScore = 0;
+        double nistScore = 0;
 
         for (int i = 0; i < translations.size(); i++) {
-            double score = bleu.getScore(translations.get(i), reference.get(i), 4);
-            bleuScore += score;
+            bleuScore += bleu.getScore(translations.get(i), reference.get(i), 4);
+            meteorScore += meteor.getScore(translations.get(i), reference.get(i));
         }
 
         bleuScore /= translations.size();
-        nistScore /= translations.size();
         meteorScore /= translations.size();
+        nistScore /= translations.size();
 
-        print(bleuScore, nistScore, meteorScore);
+        print(bleuScore, meteorScore, nistScore);
     }
 
-    public void print(double bleu, double nist, double meteor) {
+    private void print(double bleu, double meteor, double nist) {
         System.out.println("____ MOSES ____");
         System.out.println();
         System.out.println("BLEU: " + bleu);
-        System.out.println("NIST: " + nist);
         System.out.println("METEOR: " + meteor);
+        System.out.println("NIST: " + nist);
         System.out.println();
     }
 
